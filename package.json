@@ -1,5 +1,5 @@
 {
-  "name": "ory-mcp-oauth-provider",
+  "name": "@ory/mcp-oauth-provider",
   "version": "1.0.0",
   "description": "OAuth provider for Ory MCP",
   "type": "module",
