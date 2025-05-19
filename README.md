@@ -36,7 +36,7 @@ The project is organized as a TypeScript library with the following key componen
 ### Basic Setup
 
 ```typescript
-import { OryProvider, OryOptions } from 'ory-mcp-oauth-provider';
+import { OryProvider, OryOptions } from '@ory/mcp-oauth-provider';
 
 // Initialize with Ory Network
 const networkProvider = new OryProvider({
