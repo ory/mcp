@@ -5,13 +5,13 @@ A TypeScript implementation of an OAuth provider for Ory MCP that supports both 
 ## Installation
 
 ```bash
-npm install ory-mcp-oauth-provider
+npm install @ory/mcp-oauth-provider
 ```
 
 ## Project Structure
 
 ```
-ory-mcp-oauth-provider/
+mcp-oauth-provider/
 ├── src/                    # Source code directory
 │   ├── example/           # Example implementations
 │   │   └── mcp-server.ts  # Complete MCP server example
