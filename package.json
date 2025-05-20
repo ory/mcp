@@ -53,12 +53,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/ory-mcp-oauth-provider.git"
+    "url": "git+https://github.com/ory/mcp-oauth-provider.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/ory-mcp-oauth-provider/issues"
+    "url": "https://github.com/ory/mcp-oauth-provider/issues"
   },
-  "homepage": "https://github.com/yourusername/ory-mcp-oauth-provider#readme",
+  "homepage": "https://github.com/ory/mcp-oauth-provider#readme",
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.11.2",
     "express": "^5.1.0"
