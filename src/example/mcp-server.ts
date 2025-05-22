@@ -119,7 +119,7 @@ app.use(
   })
 );
 
-const beaerAuthMiddleware = requireBearerAuth({
+const bearerAuthMiddleware = requireBearerAuth({
   provider: proxyProvider,
   requiredScopes: ['ory.admin'],
 });
@@ -129,7 +129,7 @@ const beaerAuthMiddleware = requireBearerAuth({
 //=============================================================================
 
 // Handle mcp post requests
-app.post('/mcp', beaerAuthMiddleware, async (req: Request, res: Response) => {
+app.post('/mcp', bearerAuthMiddleware, async (req: Request, res: Response) => {
   const server = getServer();
   try {
     const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
@@ -157,7 +157,7 @@ app.post('/mcp', beaerAuthMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-app.get('/mcp', beaerAuthMiddleware, async (req: Request, res: Response) => {
+app.get('/mcp', bearerAuthMiddleware, async (req: Request, res: Response) => {
   console.log('Received GET MCP request');
   res.writeHead(405).end(
     JSON.stringify({
@@ -171,7 +171,7 @@ app.get('/mcp', beaerAuthMiddleware, async (req: Request, res: Response) => {
   );
 });
 
-app.delete('/mcp', beaerAuthMiddleware, async (req: Request, res: Response) => {
+app.delete('/mcp', bearerAuthMiddleware, async (req: Request, res: Response) => {
   console.log('Received DELETE MCP request');
   res.writeHead(405).end(
     JSON.stringify({
@@ -189,7 +189,7 @@ app.delete('/mcp', beaerAuthMiddleware, async (req: Request, res: Response) => {
 // DEPRECATED HTTP+SSE TRANSPORT (PROTOCOL VERSION 2024-11-05)
 //=============================================================================
 
-app.get('/sse', async (req: Request, res: Response) => {
+app.get('/sse', bearerAuthMiddleware, async (req: Request, res: Response) => {
   console.log('Received GET request to /sse (deprecated SSE transport)');
   const transport = new SSEServerTransport('/messages', res);
   transports[transport.sessionId] = transport;
@@ -200,7 +200,7 @@ app.get('/sse', async (req: Request, res: Response) => {
   await server.connect(transport);
 });
 
-app.post('/messages', async (req: Request, res: Response) => {
+app.post('/messages', bearerAuthMiddleware, async (req: Request, res: Response) => {
   const sessionId = req.query.sessionId as string;
   let transport: SSEServerTransport;
   const existingTransport = transports[sessionId];
