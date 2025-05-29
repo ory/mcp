@@ -120,7 +120,7 @@ app.use(
 );
 
 const bearerAuthMiddleware = requireBearerAuth({
-  provider: proxyProvider,
+  verifier: proxyProvider,
   requiredScopes: ['ory.admin'],
 });
 
