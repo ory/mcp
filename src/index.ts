@@ -208,10 +208,6 @@ export class OryProvider implements OAuthServerProvider {
       params.state = state;
     }
 
-    if (params.scopes?.length === 0) {
-      params.scopes = ['ory.admin'];
-    }
-
     // Start with required OAuth parameters
     const targetUrl = new URL(this._endpoints.authorizationUrl);
     const searchParams = new URLSearchParams({
