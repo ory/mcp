@@ -4,26 +4,29 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 export interface McpAccessControlOptions {
   jwksUrl: string;
   issuer: string;
+  audience: string;
+  claimKey: string;
   oryProjectUrl: string;
   oryApiKey: string;
 }
 
 export interface JwtPayload {
-  email: string;
-  exp?: number;
-  iss?: string;
   [key: string]: unknown;
 }
 
 export class McpAccessControl {
   private readonly jwksUrl: string;
   private readonly issuer: string;
+  private readonly audience: string;
+  private readonly claimKey: string;
   private readonly identityApi: IdentityApi;
   private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
 
   constructor(options: McpAccessControlOptions) {
     this.jwksUrl = options.jwksUrl;
     this.issuer = options.issuer;
+    this.audience = options.audience;
+    this.claimKey = options.claimKey;
     this.jwks = createRemoteJWKSet(new URL(this.jwksUrl));
 
     const configuration = new Configuration({
@@ -38,13 +41,13 @@ export class McpAccessControl {
     return {
       name: "ory_access_control",
       description:
-        "Validates a JWT token and creates an Ory identity for the associated email",
+        "Validates a JWT token and creates an Ory identity for the associated claim",
       parameters: {
         type: "object",
         properties: {
           token: {
             type: "string",
-            description: "JWT token containing an email claim",
+            description: "JWT token containing the required claim",
           },
         },
         required: ["token"],
@@ -54,11 +57,12 @@ export class McpAccessControl {
           // Validate JWT
           const { payload } = (await jwtVerify(params.token, this.jwks, {
             issuer: this.issuer,
-            audience: "ory",
+            audience: this.audience,
           })) as { payload: JwtPayload };
 
-          if (!payload.email) {
-            throw new Error("JWT must contain an email claim");
+          const claimValue = payload[this.claimKey];
+          if (!claimValue) {
+            throw new Error(`JWT must contain a ${this.claimKey} claim`);
           }
 
           // Create identity in Ory
@@ -66,7 +70,7 @@ export class McpAccessControl {
             createIdentityBody: {
               schema_id: "default",
               traits: {
-                email: payload.email,
+                email: claimValue as string,
               },
             },
           });
@@ -75,7 +79,7 @@ export class McpAccessControl {
             success: true,
             identity: {
               id: identity.id,
-              email: payload.email,
+              email: claimValue as string,
             },
           };
         } catch (error) {
