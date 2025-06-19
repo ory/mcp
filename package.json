@@ -1,0 +1,34 @@
+{
+  "name": "@ory/mcp-access-control",
+  "version": "0.1.0",
+  "description": "MCP Access Control tool for Ory Network integration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "ory",
+    "mcp",
+    "access-control",
+    "jwt",
+    "authentication"
+  ],
+  "author": "Ory Corp",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ory/client-fetch": "^1.20.11",
+    "jose": "^6.0.11"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "eslint": "^9.29.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
+  }
+}
