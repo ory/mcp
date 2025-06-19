@@ -2,16 +2,31 @@ import { Configuration, IdentityApi, FrontendApi } from "@ory/client-fetch";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
 export interface McpAccessControlOptions {
+  // JWT validation options
   jwksUrl: string;
   issuer: string;
   audience: string;
   claimKey: string;
+  // Ory Network options
   oryProjectUrl: string;
   oryApiKey: string;
 }
 
 export interface JwtPayload {
   [key: string]: unknown;
+}
+
+export interface SessionValidationOptions {
+  headerName: string;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  identity?: {
+    id: string;
+    email: string;
+  };
+  error?: string;
 }
 
 export class McpAccessControl {
@@ -22,6 +37,7 @@ export class McpAccessControl {
   private readonly identityApi: IdentityApi;
   private readonly frontendApi: FrontendApi;
   private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
+  private readonly oryProjectUrl: string;
 
   constructor(options: McpAccessControlOptions) {
     this.jwksUrl = options.jwksUrl;
@@ -37,6 +53,7 @@ export class McpAccessControl {
 
     this.identityApi = new IdentityApi(configuration);
     this.frontendApi = new FrontendApi(configuration);
+    this.oryProjectUrl = options.oryProjectUrl;
   }
 
   private async findIdentityByEmail(email: string) {
@@ -82,6 +99,61 @@ export class McpAccessControl {
     });
 
     return session;
+  }
+
+  /**
+   * Validates an Ory session token from the request headers
+   * @param headers - Object containing request headers
+   * @param options - Session validation options including header name
+   * @returns Validation result with identity information if valid
+   */
+  public async validateSession(
+    headers: Record<string, string>,
+    options: SessionValidationOptions
+  ): Promise<ValidationResult> {
+    try {
+      const sessionToken = headers[options.headerName.toLowerCase()];
+
+      if (!sessionToken) {
+        return {
+          isValid: false,
+          error: `No session token found in header: ${options.headerName}`,
+        };
+      }
+
+      // Use toSession with the session token in the request headers
+      const { identity } = await this.frontendApi.toSession(
+        {
+          xSessionToken: sessionToken,
+        },
+        {
+          headers: {
+            "X-Session-Token": sessionToken,
+          },
+        }
+      );
+
+      if (!identity) {
+        return {
+          isValid: false,
+          error: "Invalid or expired session token",
+        };
+      }
+
+      return {
+        isValid: true,
+        identity: {
+          id: identity.id,
+          email: identity.traits.email as string,
+        },
+      };
+    } catch (error) {
+      return {
+        isValid: false,
+        error:
+          error instanceof Error ? error.message : "Failed to validate session",
+      };
+    }
   }
 
   public getToolDefinition() {
@@ -138,7 +210,7 @@ export class McpAccessControl {
             success: true,
             identity: {
               id: identity.id,
-              email: claimValue as string,
+              email: claimValue,
             },
             session: {
               id: session.session?.id,
