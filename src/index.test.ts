@@ -3,7 +3,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { OryProvider, OryOptions } from './index.js';
 import { OAuthClientInformationFull, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js';
-import { ServerError } from '@modelcontextprotocol/sdk/server/auth/errors.js';
+import { ServerError, InvalidTokenError } from '@modelcontextprotocol/sdk/server/auth/errors.js';
 import { Response } from 'express';
 
 // Mock global fetch
@@ -293,7 +293,7 @@ describe('OryProvider', () => {
       });
 
       await expect(provider.verifyAccessToken('inactive-token')).rejects.toThrow(
-        'Token is not active'
+        new InvalidTokenError('Token is not active')
       );
       expect(mockFetch.mock.calls.length).toBe(1);
     });
@@ -318,7 +318,7 @@ describe('OryProvider', () => {
         });
 
       await expect(provider.verifyAccessToken('test-token')).rejects.toThrow(
-        'Token client ID mismatch'
+        new InvalidTokenError('Token client ID mismatch')
       );
       expect(mockFetch.mock.calls.length).toBe(2);
     });

@@ -1,7 +1,7 @@
 // Copyright © 2025 Ory Corp
 
 import { OAuthRegisteredClientsStore } from '@modelcontextprotocol/sdk/server/auth/clients.js';
-import { ServerError } from '@modelcontextprotocol/sdk/server/auth/errors.js';
+import { ServerError, InvalidTokenError } from '@modelcontextprotocol/sdk/server/auth/errors.js';
 import {
   AuthorizationParams,
   OAuthServerProvider,
@@ -380,14 +380,14 @@ export class OryProvider implements OAuthServerProvider {
       const introspection = await this.introspectToken(token);
 
       if (!introspection.active) {
-        throw new Error('Token is not active');
+        throw new InvalidTokenError('Token is not active');
       }
 
       const clients = await this.listOAuth2Clients();
       const client = clients[introspection.client_id];
 
       if (!client) {
-        throw new Error('Token client ID mismatch');
+        throw new InvalidTokenError('Token client ID mismatch');
       }
 
       return {
