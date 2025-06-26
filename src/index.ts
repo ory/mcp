@@ -56,6 +56,18 @@ export class McpAccessControl {
     this.oryProjectUrl = options.oryProjectUrl;
   }
 
+  private static getNestedProperty(obj: any, path: string) {
+    const parts = path.split(".");
+    let current = obj;
+    for (let i = 0; i < parts.length; i++) {
+      if (current === null || typeof current !== "object") {
+        return undefined;
+      }
+      current = current[parts[i]];
+    }
+    return current;
+  }
+
   private async findIdentityByEmail(email: string) {
     try {
       const identities = await this.identityApi.listIdentities({
@@ -184,7 +196,10 @@ export class McpAccessControl {
             audience: this.audience,
           })) as { payload: JwtPayload };
 
-          const claimValue = payload[this.claimKey];
+          const claimValue = McpAccessControl.getNestedProperty(
+            payload,
+            this.claimKey
+          );
           if (!claimValue) {
             throw new Error(`JWT must contain a ${this.claimKey} claim`);
           }
