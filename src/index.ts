@@ -10,6 +10,7 @@ export interface McpAccessControlOptions {
   // Ory Network options
   oryProjectUrl: string;
   oryApiKey: string;
+  schemaId?: string; // Optional schema ID, defaults to "default"
 }
 
 export interface JwtPayload {
@@ -34,6 +35,7 @@ export class McpAccessControl {
   private readonly issuer: string;
   private readonly audience: string;
   private readonly claimKey: string;
+  private readonly schemaId: string;
   private readonly identityApi: IdentityApi;
   private readonly frontendApi: FrontendApi;
   private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
@@ -44,6 +46,7 @@ export class McpAccessControl {
     this.issuer = options.issuer;
     this.audience = options.audience;
     this.claimKey = options.claimKey;
+    this.schemaId = options.schemaId || "default";
     this.jwks = createRemoteJWKSet(new URL(this.jwksUrl));
 
     const configuration = new Configuration({
@@ -82,7 +85,7 @@ export class McpAccessControl {
   private async createIdentityWithCredentials(email: string, password: string) {
     const identity = await this.identityApi.createIdentity({
       createIdentityBody: {
-        schema_id: "default",
+        schema_id: this.schemaId,
         traits: {
           email: email,
         },
