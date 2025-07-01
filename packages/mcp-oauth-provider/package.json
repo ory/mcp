@@ -1,0 +1,67 @@
+{
+  "name": "@ory/mcp-oauth-provider",
+  "version": "0.1.1",
+  "description": "OAuth provider for Ory MCP",
+  "type": "module",
+  "private": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint && npm run format:check"
+  },
+  "keywords": [
+    "ory",
+    "oauth",
+    "mcp",
+    "authentication"
+  ],
+  "author": "Ory",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.24",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
+    "@typescript-eslint/parser": "^8.33.0",
+    "eslint": "^9.27.0",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.0",
+    "vitest": "^3.1.4",
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ory/mcp-oauth-provider.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ory/mcp-oauth-provider/issues"
+  },
+  "homepage": "https://github.com/ory/mcp-oauth-provider#readme",
+  "peerDependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.2",
+    "express": "^5.1.0"
+  }
+}
