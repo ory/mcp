@@ -89,9 +89,80 @@ This repository was originally named `mcp-oauth-provider` and focused solely on 
 - Node.js 18+
 - npm or yarn
 
-### Building Packages
+### Workspace Management
 
-To build all packages:
+This repository uses pnpm workspaces to manage the monorepo structure. The workspace includes both packages and examples.
+
+#### Prerequisites
+
+- Node.js 18+
+- pnpm 8+
+
+#### Installation
+
+Install all dependencies across all packages and examples:
+
+```bash
+pnpm install
+```
+
+#### Building
+
+Build all packages:
+
+```bash
+pnpm build
+```
+
+Or build a specific package:
+
+```bash
+pnpm --filter @ory/mcp-oauth-provider build
+pnpm --filter @ory/mcp-access-control build
+```
+
+#### Testing
+
+Run tests for all packages:
+
+```bash
+pnpm test
+```
+
+Or test a specific package:
+
+```bash
+pnpm --filter @ory/mcp-oauth-provider test
+pnpm --filter @ory/mcp-access-control test
+```
+
+#### Linting and Formatting
+
+Lint all packages:
+
+```bash
+pnpm lint
+pnpm lint:fix
+```
+
+Format all packages:
+
+```bash
+pnpm format
+pnpm format:check
+```
+
+#### Development
+
+Run development mode for all packages (if available):
+
+```bash
+pnpm dev
+```
+
+#### Legacy Commands
+
+If you prefer to work with individual packages directly:
 
 ```bash
 # Build mcp-oauth-provider
@@ -103,13 +174,7 @@ npm run build
 cd ../mcp-access-control
 npm install
 npm run build
-```
 
-### Testing
-
-To run tests for all packages:
-
-```bash
 # Test mcp-oauth-provider
 cd packages/mcp-oauth-provider
 npm test

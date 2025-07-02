@@ -1,0 +1,41 @@
+{
+  "name": "@ory/mcp",
+  "version": "0.1.0",
+  "description": "Ory MCP (Model Context Protocol) packages for authentication and access control integration",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "format": "pnpm -r format",
+    "format:check": "pnpm -r format:check",
+    "clean": "pnpm -r clean",
+    "dev": "pnpm -r dev"
+  },
+  "author": "Ory Corp",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ory/mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ory/mcp/issues"
+  },
+  "homepage": "https://github.com/ory/mcp#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.5",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
