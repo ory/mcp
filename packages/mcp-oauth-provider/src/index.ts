@@ -202,10 +202,8 @@ export class OryProvider implements OAuthServerProvider {
     params: AuthorizationParams,
     res: Response
   ): Promise<void> {
-    let state = '';
     if (!params.state) {
-      state = crypto.randomBytes(32).toString('hex');
-      params.state = state;
+      params.state = crypto.randomBytes(32).toString('hex');
     }
 
     // Start with required OAuth parameters

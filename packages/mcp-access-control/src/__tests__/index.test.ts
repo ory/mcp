@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { McpAccessControl } from "../index";
 
 // Mocks
@@ -59,7 +59,9 @@ describe("McpAccessControl", () => {
     const ac = new McpAccessControl(options);
     // Mock JWT verify
     const { jwtVerify } = await import("jose");
-    (jwtVerify as any).mockResolvedValue({ payload: { email: "foo@bar.com" } });
+    (jwtVerify as unknown as Mock).mockResolvedValue({
+      payload: { email: "foo@bar.com" },
+    });
     // Mock identity not found
     mockListIdentities.mockResolvedValue([]);
     // Mock create identity
@@ -84,7 +86,9 @@ describe("McpAccessControl", () => {
   it("handler uses existing identity if found", async () => {
     const ac = new McpAccessControl(options);
     const { jwtVerify } = await import("jose");
-    (jwtVerify as any).mockResolvedValue({ payload: { email: "foo@bar.com" } });
+    (jwtVerify as unknown as Mock).mockResolvedValue({
+      payload: { email: "foo@bar.com" },
+    });
     mockListIdentities.mockResolvedValue([
       { id: "id-123", traits: { email: "foo@bar.com" } },
     ]);
@@ -104,7 +108,7 @@ describe("McpAccessControl", () => {
   it("handler returns error if JWT is missing claim", async () => {
     const ac = new McpAccessControl(options);
     const { jwtVerify } = await import("jose");
-    (jwtVerify as any).mockResolvedValue({ payload: {} });
+    (jwtVerify as unknown as Mock).mockResolvedValue({ payload: {} });
     const tool = ac.getToolDefinition();
     const result = await tool.handler({ token: "tok", password: "pw" });
     expect(result.success).toBe(false);
@@ -118,7 +122,7 @@ describe("McpAccessControl", () => {
     });
     const result = await ac.validateSession(
       { "x-session-token": "token" },
-      { headerName: "x-session-token" }
+      { headerName: "x-session-token" },
     );
     expect(result.isValid).toBe(true);
     expect(result.identity!.email).toBe("foo@bar.com");
@@ -128,7 +132,7 @@ describe("McpAccessControl", () => {
     const ac = new McpAccessControl(options);
     const result = await ac.validateSession(
       {},
-      { headerName: "x-session-token" }
+      { headerName: "x-session-token" },
     );
     expect(result.isValid).toBe(false);
     expect(result.error).toMatch(/No session token/);
@@ -139,7 +143,7 @@ describe("McpAccessControl", () => {
     mockToSession.mockResolvedValue({ identity: undefined });
     const result = await ac.validateSession(
       { "x-session-token": "token" },
-      { headerName: "x-session-token" }
+      { headerName: "x-session-token" },
     );
     expect(result.isValid).toBe(false);
     expect(result.error).toMatch(/Invalid/);
