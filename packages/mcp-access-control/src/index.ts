@@ -59,14 +59,14 @@ export class McpAccessControl {
     this.oryProjectUrl = options.oryProjectUrl;
   }
 
-  private static getNestedProperty(obj: any, path: string) {
+  private static getNestedProperty(obj: unknown, path: string): unknown {
     const parts = path.split(".");
     let current = obj;
     for (let i = 0; i < parts.length; i++) {
       if (current === null || typeof current !== "object") {
         return undefined;
       }
-      current = current[parts[i]];
+      current = (current as Record<string, unknown>)[parts[i]];
     }
     return current;
   }
@@ -77,7 +77,7 @@ export class McpAccessControl {
         credentialsIdentifier: email,
       });
       return identities.length > 0 ? identities[0] : null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -124,7 +124,7 @@ export class McpAccessControl {
    */
   public async validateSession(
     headers: Record<string, string>,
-    options: SessionValidationOptions
+    options: SessionValidationOptions,
   ): Promise<ValidationResult> {
     try {
       const sessionToken = headers[options.headerName.toLowerCase()];
@@ -145,7 +145,7 @@ export class McpAccessControl {
           headers: {
             "X-Session-Token": sessionToken,
           },
-        }
+        },
       );
 
       if (!identity) {
@@ -159,7 +159,7 @@ export class McpAccessControl {
         isValid: true,
         identity: {
           id: identity.id,
-          email: identity.traits.email as string,
+          email: (identity.traits as { email: string }).email,
         },
       };
     } catch (error) {
@@ -201,27 +201,27 @@ export class McpAccessControl {
 
           const claimValue = McpAccessControl.getNestedProperty(
             payload,
-            this.claimKey
+            this.claimKey,
           );
-          if (!claimValue) {
+          if (typeof claimValue !== "string" || !claimValue) {
             throw new Error(`JWT must contain a ${this.claimKey} claim`);
           }
 
           // Check if identity exists
-          let identity = await this.findIdentityByEmail(claimValue as string);
+          let identity = await this.findIdentityByEmail(claimValue);
 
           // Create identity if it doesn't exist
           if (!identity) {
             identity = await this.createIdentityWithCredentials(
-              claimValue as string,
-              params.password
+              claimValue,
+              params.password,
             );
           }
 
           // Authenticate the identity
           const session = await this.authenticateIdentity(
-            claimValue as string,
-            params.password
+            claimValue,
+            params.password,
           );
 
           return {

@@ -4,19 +4,12 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: [
-      'dist/**',
-      'node_modules/**',
-      'coverage/**',
-      'eslint.config.mjs',
-      '*.config.ts',
-      'src/example/**',
-    ],
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'eslint.config.mjs', '*.config.ts'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.mts'],
+    files: ['**/*.ts', '**/*.mts'],
     languageOptions: {
       globals: {
         ...globals.node,
